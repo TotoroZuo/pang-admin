@@ -1,0 +1,41 @@
+/* IE9 Heaker */
+.el-tabs__item {
+    width: 50%\9\0;
+}
+.layout-aside{
+    float: left;
+    display: block\9\0;
+    height: 100vh;
+}
+.right-main-container{
+    display: block\9\0;
+    margin-left: 201px\9\0;
+     height: 100vh;
+}
+.layout-header-content {
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+}
+
+.header-content-middle {
+    display: table-cell\9\0!important;
+}
+
+.header-content-right{
+    width: 350px;
+    display: table-cell;
+}
+.material-icons{
+    display: none;
+}
+.el-main.layout-main{
+    height: calc(100% - 90px);
+}
+.header-icons{
+    line-height: 50px!important;
+    margin-top: 0 !important;
+}
+.layout-footer{
+    line-height: 40px;
+}

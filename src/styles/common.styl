@@ -1,0 +1,106 @@
+$radius = 2px //圆角设置
+// paper相关
+.royal-paper
+    -webkit-transition: all .45s cubic-bezier(.23,1,.32,1);
+    transition: all .45s cubic-bezier(.23,1,.32,1);
+    color: rgba(0,0,0,.87);
+    background-color: #fff;
+.royal-paper-1
+    box-shadow: 0 2px 1px -1px rgba(0,0,00,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 1px 3px 0 rgba(0,0,0,.12);
+.royal-paper-2
+    box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
+.royal-paper-3
+    box-shadow: 0 3px 3px -2px rgba(0,0,0,.2), 0 3px 4px 0 rgba(0,0,0,.14), 0 1px 8px 0 rgba(0,0,0,.12);
+.royal-paper-4
+    box-shadow: 0 2px 4px -1px rgba(0,0,0,.2), 0 4px 5px 0 rgba(0,0,0,.14), 0 1px 10px 0 rgba(0,0,0,.12);
+.royal-paper-5
+    box-shadow: 0 3px 5px -1px rgba(0,0,0,.2), 0 5px 8px 0 rgba(0,0,0,.14), 0 1px 14px 0 rgba(0,0,0,.12);
+//sideOut 通知小红点
+.notice-nums .el-badge__content.is-fixed
+    top -5px
+    right 5px
+.notice-nums .el-badge__content
+    font-size 9px
+
+//element ui 分页美化
+
+// 带下拉框的搜索框
+.el-select .el-input
+    width: 130px;
+.input-with-select .el-input-group__prepend,.input-with-select .el-input-group__append
+    background-color: #fff;
+.input-with-select .el-input-group__append:focus, .input-with-select .el-input-group__append:hover
+    color: #409EFF;
+    border-color: #c6e2ff;
+    background-color: #ecf5ff;
+
+// 分页美化
+.el-pagination .el-pager li:not(.disabled).active {
+    background-color: #409eff;
+    color: #fff;
+    border-radius $radius;
+}
+.el-pagination__editor.el-input .el-input__inner,.el-pagination .el-select .el-input .el-input__inner
+    border-radius $radius;
+.el-pagination__total
+    margin-left 10px
+    margin-right 5px
+.el-pagination__jump
+    margin-left 10px
+.el-pagination .btn-next .el-icon, .el-pagination .btn-prev .el-icon
+    font-size 14px
+
+// 边框优化圆角优化
+.el-input__inner,.el-button
+    border-radius $radius!important
+.el-input__inner::placeholder
+    font-weight 200
+    font-size 13px
+
+// 复选框优化
+.el-checkbox__inner
+     width 16px!important
+     height 16px!important
+.el-checkbox__inner::after
+    top: 2px !important;
+    height: 6px !important;
+    left: 5px !important;
+    width: 3px;
+.el-checkbox__input.is-indeterminate .el-checkbox__inner::before
+    top: 6px
+// 修复element表格错位
+body .el-table th.gutter{
+    display: table-cell!important;
+}
+// 布局主区域 美化滚动条，解决flex 1 子元素100%失效问题
+.el-main.layout-main,.el-main.layout-main-iframe
+    overflow hidden!important
+    position relative
+.layout-main .latout-scrollbar,.layout-main-iframe .latout-scrollbar
+    position absolute
+    width: 100%
+    height 100%
+    top: 0 /* 20/16 */
+    left 0 /* 20/16 */
+    bottom: 0 /* 20/16 */
+    box-sizing: border-box
+
+.layout-main .el-scrollbar__wrap,.layout-main-iframe .el-scrollbar__wrap
+    padding: 1.25rem /* 20/16 */
+
+// 展开表格样式
+.list-table-expand {
+    font-size: 0;
+}
+.list-table-expand label {
+    width: 90px;
+    color: #99a9bf;
+}
+.list-table-expand .el-form-item {
+    margin-right: 0!important;
+    margin-bottom: 0;
+    width: 50%;
+}
+
+.clear
+    clear both

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <link rel="icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/libs/normalize.css">
+  <link rel="stylesheet" href="/icons/material-icons.css">
+  <!--[if  IE 9]>
+    <link rel="stylesheet" href="/libs/hacker.css">
+  <![endif]-->
+  <title>royal-admin</title>
+  <!-- built files will be auto injected -->
+  <style>
+    #loading-box{
+      position: fixed;
+      width: 100%;
+      height: 100vh;
+      z-index: 999;
+      background-color:#0b4182;
+      background: linear-gradient(0deg, #0b4182 1%, #1e88e5 100%);
+      color: #fff;
+      text-align: center;
+      box-sizing: border-box;
+      -webkit-box-sizing: border-box;
+    }
+    .loading-content{
+      position: absolute;
+      top: 40%;
+      left: 45%;
+      transform: translate(-50% -50%);
+      text-align: center;
+    }
+    .loading-shadow-wrap{
+        width: 80px;
+        height: 80px;
+        background: #fff;
+        border-radius: 50%;
+        -webkit-box-shadow: 0 3px 5px -1px rgba(0,0,30,0.2), 0 5px 8px 0 rgba(0,0,30,0.14), 0 1px 14px 0 rgba(0,0,30,0.12);
+        box-shadow: 0 3px 5px -1px rgba(0,0,30,0.2), 0 5px 8px 0 rgba(0,0,30,0.14), 0 1px 14px 0 rgba(0,0,30,0.12);
+    }
+    #app{
+        display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <noscript>
+    <strong>We're sorry but royal-admin doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+  </noscript>
+  <div id="loading-box">
+        <div style="font-size:14px;z-index: 1000;">
+            <div class="loading-content">
+                <div class="loading-shadow-wrap">
+                    <embed src="/icons/loding-80.svg" width="80" height=80" style="background:none;" type="image/svg+xml" pluginspage="http://www.adobe.com/svg/viewer/install/" />
+                </div>
+            </div>
+        </div>
+    </div>
+  <div id="app"></div>
+<!--[if lte IE 9]>
+      <script rel="preload" src="/libs/placeholders.min.js"></script>
+      <script rel="preload" src="/libs/flexibility.js"></script>
+      <script>
+        window.onload=function(){
+          flexibility(document.documentElement);
+        }
+      </script>
+  <![endif]-->
+  <script rel="preload" src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+  <script rel="preload" src="https://unpkg.com/vue-router@3.0.1/dist/vue-router.js"></script>
+  <script rel="preload" src="https://unpkg.com/vuex@3.0.1/dist/vuex.js"></script>
+  <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+</body>
+
+</html>

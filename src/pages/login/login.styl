@@ -1,0 +1,127 @@
+.login-main
+  position absolute
+  left 0
+  right 0
+  top 0
+  bottom 0
+
+  // background-image  url('../../assets/logo-bg.jpg')
+  background-repeat no-repeat
+  background-size cover
+  z-index 1
+  overflow hidden
+  background-color #0b4182
+.login-main:after
+  content: ""
+  width:101%
+  height:100%
+  position: absolute
+  left:-16px
+  top:0
+  background: inherit
+  filter: blur(16px)
+  z-index: 2
+  background: linear-gradient(0deg, #0b4182 1%, #1e88e5 100%);
+
+.login-footer
+  position fixed
+  bottom 0
+  width 100%
+  height 40px
+  line-height 40px
+  background-color #fff
+  color #777
+  font-size 13px
+  text-align center
+  z-index 3
+
+.login-form-box
+  position absolute
+  z-index 4
+  left 50%
+  top 50%
+  transform translateX(-50%) translateY(-50%)
+  width 360px
+  padding 30px 30px 20px
+
+.login-paper
+
+  -webkit-transition: all .45s cubic-bezier(.23,1,.32,1)
+  transition: all .45s cubic-bezier(.23,1,.32,1)
+  color: rgba(0,0,0,.87)
+  background-color: #fff
+  box-shadow: 0 3px 5px -1px rgba(0,0,30,.2), 0 5px 8px 0 rgba(0,0,30,.14), 0 1px 14px 0 rgba(0,0,30,.12);
+  border-radius 3px
+.login-slogan
+  position absolute
+  width 600px
+  top 20px
+  left 50%
+  transform translateX(-50%)
+  z-index 4
+
+.slogan-enter-active
+  transition: all 1s
+
+.slogan-enter
+  opacity: 0;
+  transform: translateX(30px)
+
+.loginform-enter-active
+  transition: all 1s
+
+.loginform-enter
+  opacity: 0;
+  transform: translateY(30px)
+.login-input
+  margin-bottom 20px
+  &:first-child
+    margin-top 20px
+.signup-link-box
+  padding-top 10px
+  &:after
+    content ''
+    display block
+    clear both
+.signup-link
+  color #777
+  float left
+  &:hover
+    color #409eff
+.forgot-link
+  color #777
+  float right
+  &:hover
+    color #409eff
+.qr-content
+  padding 20px 30px 0px
+  text-align: center
+.qr-img
+  width 200px
+.qr-tip
+  font-size 14px
+  color #777
+  padding 10px 0 10px
+  text-align: center
+.brand-log
+  position absolute
+  padding 0
+  width 80px
+  height 80px
+  border-radius 50%
+  left 172px
+  top -42px
+.brand-log img
+  width 100%
+  border-radius 100%
+  border 3px solid #fff
+  // box-shadow: 0 2px 1px -1px rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 1px 3px 0 rgba(0,0,0,.12);
+.login-msg
+    font-size: 13px
+    color: #F56C6C
+    margin-top: -10px
+    margin-bottom: 10px
+    padding: 5px 0
+.layout-iframe
+  width: 100%
+  height 100vh
