@@ -21,9 +21,8 @@
                 <el-form-item label="设置封面" prop="avator">
                     <el-upload
                         class="avatar-uploader"
-                        action="http://118.31.133.238:8883/upload"
+                        action="/admin/common/upload"
                         name="file"
-                        :data="{type:'photo'}"
                         :show-file-list="false"
                         :on-preview="handlePictureCardPreview"
                         :on-success="handleAvatarSuccess">
@@ -51,6 +50,44 @@
                 <el-form-item label="排序权重" prop="weight" class="float-label">
                     <el-input v-model="Info.weight" placeholder="请输入排序权重"></el-input>
                 </el-form-item>
+                <el-form-item label="文章类别" prop="cate" class="float-label">
+                    <el-select v-model="Info.cate" clearable placeholder="请选择">
+                      <el-option
+                        label="文章类别1"
+                        value="cate1">
+                      </el-option>
+                      <el-option
+                        label="文章类别2"
+                        value="cate2">
+                      </el-option>
+                      <el-option
+                        label="文章类别3"
+                        value="cate3">
+                      </el-option>
+                    </el-select>
+                </el-form-item>
+                <div class="clear"></div>
+                <el-form-item label="文章标签" prop="tags" >
+                   <el-tag
+                      :key="tag"
+                      v-for="tag in Info.tags"
+                      closable
+                      :disable-transitions="false"
+                      @close="handleClose(tag)">
+                      {{tag}}
+                    </el-tag>
+                    <el-input
+                      class="input-new-tag"
+                      v-if="newTagVisible"
+                      v-model="newTag"
+                      ref="saveTagInput"
+                      size="small"
+                      @keyup.enter.native="handleInputConfirm"
+                      @blur="handleInputConfirm"
+                    >
+                    </el-input>
+                    <el-button v-else class="button-new-tag" size="small" @click="showInput">+新标签</el-button>
+                </el-form-item>
 
                 <div style="clear:both;"></div>
                 <el-form-item label="公告正文" prop="noticeContent">
@@ -58,7 +95,7 @@
                         <vue-editor v-model="Info.noticeContent" :options="editorOptions"></vue-editor>
                     </div>
                 </el-form-item>
-                <el-form-item label="是否置顶" prop="enable">
+                <el-form-item label="是否推荐" prop="enable">
                     <el-radio-group v-model="Info.stickTop">
                         <el-radio :label="true" >开启</el-radio>
                         <el-radio :label="false">关闭</el-radio>
@@ -85,6 +122,8 @@ const Info = {
   nid: 'aaa', // ID
   title: '', // 标题
   subTitle: '', // 摘要
+  cate: '', // 分类
+  tags: [], // 标签
   noticeContent: '<p>dfadadad</p>', // 正文
   author: '', // 作者
   subPic: '', // 封面
@@ -109,6 +148,8 @@ export default {
       Info,
       apiRules,
       editorOptions,
+      newTag: '',
+      newTagVisible: false,
       pickerOptions1: {
         shortcuts: [{
           text: '今天',
@@ -204,11 +245,31 @@ export default {
       this.Info.pathDeep = node.level
     },
     handleAvatarSuccess (res, file) {
+      console.log(res)
       this.Info.subPic = URL.createObjectURL(file.raw)
     },
     handlePictureCardPreview (file) {
       console.log(file)
       this.Info.subPic = file.url
+    },
+    handleClose (tag) {
+      this.Info.tags.splice(this.Info.tags.indexOf(tag), 1)
+    },
+
+    showInput () {
+      this.newTagVisible = true
+      this.$nextTick(_ => {
+        this.$refs.saveTagInput.$refs.input.focus()
+      })
+    },
+
+    handleInputConfirm () {
+      let inputValue = this.newTag
+      if (inputValue) {
+        this.Info.tags.push(inputValue)
+      }
+      this.newTagVisible = false
+      this.newTag = ''
     }
   },
   mounted () {
@@ -265,6 +326,19 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
+ .el-tag {
+    margin-right: 10px;
+  }
+  .button-new-tag {
+    height: 32px;
+    line-height: 30px;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .input-new-tag {
+    width: 90px;
+    vertical-align: bottom;
+  }
 .user-dialog-body {
     max-width: 980px;
     margin: 0 auto;
@@ -274,7 +348,9 @@ export default {
     width: 50%;
     float: left;
 }
-
+.float-label .el-select{
+  width 100%;
+}
 >>> .el-checkbox+.el-checkbox {
     margin-left: 0;
 }

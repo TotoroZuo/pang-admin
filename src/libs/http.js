@@ -2,7 +2,7 @@
  * @Author: Long maomao
  * @Date: 2018-09-10 14:17:54
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2018-11-18 02:35:07
+ * @LastEditTime: 2018-11-20 23:26:22
  * @Email: zlf@zuolongfei.me
  *
  *@Description: 网络请求封装
@@ -12,6 +12,7 @@ import axios from 'axios'
 import qs from 'qs'
 import jsonp from 'jsonp'
 import store from '@/store/sideOuter/'
+import router from '../router/'
 // 要排除不带token的url
 const excludeUrls = ['/admin/user/doLogin']
 
@@ -56,7 +57,6 @@ axios.interceptors.response.use(
  * @return  {[type]}
  */
 function checkStatus (response) {
-  console.log(response)
   let data
   if (response.data === undefined) {
     // IE9时response.data是undefined，因此需要使用response.request.responseText(Stringify后的字符串)
@@ -64,10 +64,14 @@ function checkStatus (response) {
   } else {
     data = response.data
   }
+
   //   根据返回的code值来做不同的处理（和后端约定）
   switch (data.code) {
-    case '9000': // 登录过期
+    case '401': // 登录过期
       store.commit('user/clear')
+      router.push({
+        name: 'login'
+      })
       break
     default:
   }
@@ -83,14 +87,18 @@ function checkStatus (response) {
  */
 
 function checkCode (err) {
-  if (err && err.response) {
-    switch (err.response.status) {
+  if (err) {
+    switch (err.status) {
       case 400:
         err.message = '请求错误'
         break
 
       case 401:
         err.message = '未授权，请登录'
+        store.commit('user/clear')
+        router.push({
+          name: 'login'
+        })
         break
 
       case 403:
@@ -98,7 +106,7 @@ function checkCode (err) {
         break
 
       case 404:
-        err.message = `请求地址出错: ${err.response.config.url}`
+        err.message = `请求地址出错: ${err.config.url}`
         break
 
       case 408:
