@@ -26,7 +26,7 @@
                         :show-file-list="false"
                         :on-preview="handlePictureCardPreview"
                         :on-success="handleAvatarSuccess">
-                        <img v-if="Info.avator" :src="Info.subPic" class="avatar">
+                        <img v-if="Info.subPic" :src="Info.subPic" class="avatar">
                         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                     </el-upload>
                 </el-form-item>
@@ -246,7 +246,9 @@ export default {
     },
     handleAvatarSuccess (res, file) {
       console.log(res)
-      this.Info.subPic = URL.createObjectURL(file.raw)
+      if (res.code == 200) {
+        this.Info.subPic = res.data.imgUrl
+      }
     },
     handlePictureCardPreview (file) {
       console.log(file)
