@@ -13,10 +13,10 @@
             <el-form ref="apiForm" :model="Info" :rules="apiRules" label-width="85px" label-position='right' size="medium">
 
                 <el-form-item label="公告标题" prop="title" >
-                    <el-input v-model="Info.title" placeholder="请输入标题"></el-input>
+                    <el-input v-model.trim="Info.title" placeholder="请输入标题"></el-input>
                 </el-form-item>
                 <el-form-item label="公告摘要" prop="subTitle" >
-                    <el-input type="textarea" :autosize="{ minRows: 2, maxRows: 6}" v-model="Info.subTitle" placeholder="请输入摘要"></el-input>
+                    <el-input type="textarea" :autosize="{ minRows: 2, maxRows: 6}" v-model.trim="Info.introduction" placeholder="请输入摘要"></el-input>
                 </el-form-item>
                 <el-form-item label="设置封面" prop="avator">
                     <el-upload
@@ -31,7 +31,7 @@
                     </el-upload>
                 </el-form-item>
                 <el-form-item label="作者名称" prop="author" class="float-label">
-                    <el-input v-model="Info.author" placeholder="请输入作者名称"></el-input>
+                    <el-input v-model.trim="Info.author" placeholder="请输入作者名称"></el-input>
                 </el-form-item>
                 <el-form-item label="发布时间" prop="time" class="float-label">
                     <el-date-picker
@@ -44,14 +44,14 @@
                     </el-date-picker>
                 </el-form-item>
                 <el-form-item label="公告来源" prop="origin" class="float-label">
-                    <el-input v-model="Info.origin" placeholder="请输入公告来源"></el-input>
+                    <el-input v-model.trim="Info.origin" placeholder="请输入公告来源"></el-input>
                 </el-form-item>
 
                 <el-form-item label="排序权重" prop="weight" class="float-label">
-                    <el-input v-model="Info.weight" placeholder="请输入排序权重"></el-input>
+                    <el-input v-model.number="Info.weight" placeholder="请输入排序权重"></el-input>
                 </el-form-item>
                 <el-form-item label="文章类别" prop="cate" class="float-label">
-                    <el-select v-model="Info.cate" clearable placeholder="请选择">
+                    <el-select v-model="Info.category" clearable placeholder="请选择">
                       <el-option
                         label="文章类别1"
                         value="cate1">
@@ -67,10 +67,10 @@
                     </el-select>
                 </el-form-item>
                 <div class="clear"></div>
-                <el-form-item label="文章标签" prop="tags" >
+                <el-form-item label="文章标签" prop="tag" >
                    <el-tag
                       :key="tag"
-                      v-for="tag in Info.tags"
+                      v-for="tag in Info.tag"
                       closable
                       :disable-transitions="false"
                       @close="handleClose(tag)">
@@ -79,7 +79,7 @@
                     <el-input
                       class="input-new-tag"
                       v-if="newTagVisible"
-                      v-model="newTag"
+                      v-model.trim="newTag"
                       ref="saveTagInput"
                       size="small"
                       @keyup.enter.native="handleInputConfirm"
@@ -92,19 +92,20 @@
                 <div style="clear:both;"></div>
                 <el-form-item label="公告正文" prop="noticeContent">
                     <div class="dialog-editor-wrap">
-                        <vue-editor v-model="Info.noticeContent" :options="editorOptions"></vue-editor>
+                        <vue-editor v-model="Info.content" :options="editorOptions"></vue-editor>
                     </div>
                 </el-form-item>
                 <el-form-item label="是否推荐" prop="enable">
-                    <el-radio-group v-model="Info.stickTop">
-                        <el-radio :label="true" >开启</el-radio>
-                        <el-radio :label="false">关闭</el-radio>
+                    <el-radio-group v-model="Info.recommend">
+                        <el-radio :label="1" >开启</el-radio>
+                        <el-radio :label="0">关闭</el-radio>
                     </el-radio-group>
                 </el-form-item>
 
                 <el-form-item style="margin-bottom:0;">
-                    <el-button type="primary" @click="onSubmit">发布</el-button>
-                    <el-button type="info" @click="onSubmit">草稿</el-button>
+                    <el-button type="primary" @click="onSubmit('publish')">发布</el-button>
+                    <el-button type="info" @click="onSubmit('draft')">草稿</el-button>
+                    <el-button type="success" >预览</el-button>
                     <el-button  @click="restForm">重置</el-button>
                     <el-button  @click="closeDialog">取消</el-button>
                 </el-form-item>
@@ -119,23 +120,36 @@
 import apiRules from './apiRules.js'
 import vueEditor from '@/components/Editor.vue'
 const Info = {
-  nid: 'aaa', // ID
+  aid: '', // ID
   title: '', // 标题
-  subTitle: '', // 摘要
-  cate: '', // 分类
-  tags: [], // 标签
-  noticeContent: '<p>dfadadad</p>', // 正文
+  introduction: '', // 摘要
+  category: '', // 分类
+  tag: [], // 标签
+  content: '', // 正文
   author: '', // 作者
   subPic: '', // 封面
   time: new Date(), // 更新时间
-  stickTop: false, // 是否置顶
+  recommend: 0, // 是否置顶
   weight: 0, // 排序
   origin: '' // 来源
 }
 // 默认传入的用户信息
-const defaultInfo = { ...Info }
+const defaultInfo = JSON.parse(JSON.stringify(Info))
 const editorOptions = {
-  uploadImgServer: '/upload'
+  uploadImgServer: '/admin/common/upload',
+  uploadFileName: 'file',
+  uploadImgHooks: {
+    customInsert (insertImg, result, editor) {
+      // 图片上传并返回结果，自定义插入图片的事件（而不是编辑器自动插入图片！！！）
+      // insertImg 是插入图片的函数，editor 是编辑器对象，result 是服务器端返回的结果
+
+      // 举例：假如上传图片成功后，服务器端返回的是 {url:'....'} 这种格式，即可这样插入图片：
+      var url = result.data.imgUrl
+      insertImg(url)
+
+      // result 必须是一个 JSON 格式字符串！！！否则报错
+    }
+  }
 }
 export default {
   name: 'apiDialog',
@@ -144,10 +158,10 @@ export default {
   },
   data () {
     return {
-      dialogOpen: false,
       Info,
       apiRules,
       editorOptions,
+      dialogOpen: false,
       newTag: '',
       newTagVisible: false,
       pickerOptions1: {
@@ -171,29 +185,7 @@ export default {
             picker.$emit('pick', date)
           }
         }]
-      },
-      menuTreeData: [ {
-        id: 'a',
-        label: 'a',
-        level: 1,
-        children: [ {
-          id: 'aa',
-          label: 'aa',
-          level: 2
-        }, {
-          id: 'ab',
-          label: 'ab',
-          level: 2
-        } ]
-      }, {
-        id: 'b',
-        label: 'b',
-        level: 1
-      }, {
-        id: 'c',
-        label: 'c',
-        level: 1
-      } ]
+      }
     }
   },
   props: {
@@ -206,6 +198,10 @@ export default {
     open: {
       type: Boolean,
       default: false
+    },
+    article: {
+      type: Object,
+      default: null
     }
   },
   methods: {
@@ -214,29 +210,56 @@ export default {
       this.dialogOpen = false
     },
     // 进行表单校验
-    onSubmit () {
+    onSubmit (type) {
       this.$refs['apiForm'].validate((valid) => {
         if (valid) {
-          this.doSubmitData()
+          this.doSubmitData(type)
         }
       })
     },
     // 表单进行数据提交
-    doSubmitData () {
+    doSubmitData (status) {
       const params = { ...this.Info }
       if (this.type == 'add') {
         delete params['aid']
       }
+      params.status = status == 'publish' ? 2 : 1
+      params.optionType = this.type == 'add' ? 'add' : 'editor'
+      this.$apis.article.addOrUpdateArticle(params)
+        .then(res => {
+          console.log(res)
+          if (res.code == 200) {
+            // 成功之后消息提醒
+            this.$message({
+              message: res.msg,
+              type: 'success',
+              duration: 1000
+            })
+            this.$emit('success')
+          } else {
+            this.$message({
+              message: res.msg,
+              type: 'error',
+              duration: 1000
+            })
+          }
+        })
+        .catch(err => {
+          if (err) {
+            console.log(err)
+          }
+        })
     },
     /**
      * @description: 重置表单信息
      */
     restForm () {
       if (this.type === 'add') {
-        this.Info = defaultInfo
+        this.Info = JSON.parse(JSON.stringify(defaultInfo))
       } else {
-        this.Info = { ...this.selectInfo }
+        this.Info = JSON.parse(JSON.stringify(this.article))
       }
+      console.log(this.Info)
     },
     /**
      * @description: 改变菜单层级
@@ -245,30 +268,26 @@ export default {
       this.Info.pathDeep = node.level
     },
     handleAvatarSuccess (res, file) {
-      console.log(res)
       if (res.code == 200) {
         this.Info.subPic = res.data.imgUrl
       }
     },
     handlePictureCardPreview (file) {
-      console.log(file)
       this.Info.subPic = file.url
     },
     handleClose (tag) {
-      this.Info.tags.splice(this.Info.tags.indexOf(tag), 1)
+      this.Info.tag.splice(this.Info.tag.indexOf(tag), 1)
     },
-
     showInput () {
       this.newTagVisible = true
       this.$nextTick(_ => {
         this.$refs.saveTagInput.$refs.input.focus()
       })
     },
-
     handleInputConfirm () {
       let inputValue = this.newTag
       if (inputValue) {
-        this.Info.tags.push(inputValue)
+        this.Info.tag.push(inputValue)
       }
       this.newTagVisible = false
       this.newTag = ''
@@ -276,20 +295,17 @@ export default {
   },
   mounted () {
     this.Info.author = this.userInfo.userName
+    console.log(this.Info)
+    console.log(this.type)
   },
   computed: {
     /**
      * @description:变化标题
      */
     dialogTitle () {
-      return this.type === 'add' ? '创建接口' : '编辑接口'
+      return this.type === 'add' ? '创建文章' : '编辑文章'
     },
-    /**
-     * @description 获取选中菜单详情
-     */
-    selectInfo () {
-      return this.$store.state.options.selectApi
-    },
+
     /**
      * @description 获取用户信息
      */
@@ -300,30 +316,27 @@ export default {
   watch: {
     dialogOpen (val) {
       if (!val) {
-        this.Info = defaultInfo
+        this.Info = JSON.parse(JSON.stringify(defaultInfo))
         this.$refs['apiForm'].resetFields()
         // 同步open状态解决多次点击问题
-        this.$emit('update:open', false)
         this.$emit('update:type', 'add')
       }
+      this.$emit('update:open', val)
     },
-    // 监听模态框开关
+    // 监听对话框
     open (val) {
       if (val) {
-        this.dialogOpen = true
+        this.dialogOpen = val
       }
     },
     // 监控是添加还是编辑
-    type (val) {
-      if (val == 'add') {
-        this.Info = defaultInfo
-      } else {
-        this.Info = { ...this.selectInfo }
+    type (val, old) {
+      if (val != 'add') {
+        this.Info =  JSON.parse(JSON.stringify(this.article))
+        console.log(this.Info)
       }
-    },
-    'Info.noticeContent' (val) {
-      console.log(val)
     }
+
   }
 }
 </script>

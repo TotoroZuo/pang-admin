@@ -15,8 +15,7 @@ export default {
   name: 'vue-editor',
   data () {
     return {
-      editor: null,
-      editorContent: ''
+      editor: null
     }
   },
   props: {
@@ -33,11 +32,16 @@ export default {
         this.editor.customConfig = { ...this.options }
       }
       this.editor.customConfig.onchange = (html) => {
-        this.editorContent = html
         this.$emit('input', html)
       }
       this.editor.create()
-      this.editor.txt.html(this.value)
+    }
+  },
+  watch: {
+    value (val) {
+      if (this.editor) {
+        this.editor.txt.html(this.value)
+      }
     }
   },
   beforeDestroy () {
