@@ -152,7 +152,7 @@ const editorOptions = {
   }
 }
 export default {
-  name: 'apiDialog',
+  name: 'articleDialog',
   components: {
     vueEditor
   },
@@ -227,7 +227,6 @@ export default {
       params.optionType = this.type == 'add' ? 'add' : 'editor'
       this.$apis.article.addOrUpdateArticle(params)
         .then(res => {
-          console.log(res)
           if (res.code == 200) {
             // 成功之后消息提醒
             this.$message({
@@ -235,6 +234,7 @@ export default {
               type: 'success',
               duration: 1000
             })
+            this.dialogOpen = false
             this.$emit('success')
           } else {
             this.$message({
@@ -259,7 +259,6 @@ export default {
       } else {
         this.Info = JSON.parse(JSON.stringify(this.article))
       }
-      console.log(this.Info)
     },
     /**
      * @description: 改变菜单层级
@@ -295,8 +294,6 @@ export default {
   },
   mounted () {
     this.Info.author = this.userInfo.userName
-    console.log(this.Info)
-    console.log(this.type)
   },
   computed: {
     /**
@@ -333,7 +330,6 @@ export default {
     type (val, old) {
       if (val != 'add') {
         this.Info =  JSON.parse(JSON.stringify(this.article))
-        console.log(this.Info)
       }
     }
 

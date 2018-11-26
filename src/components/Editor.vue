@@ -35,6 +35,7 @@ export default {
         this.$emit('input', html)
       }
       this.editor.create()
+      this.editor.txt.html(this.value)
     }
   },
   watch: {

@@ -64,27 +64,30 @@
             <el-table-column
                 label="标题"
                 align="center"
+                min-width="200"
                 >
                 <template slot-scope="props">
                     <el-button type="text" >{{props.row.title}}</el-button>
                 </template>
             </el-table-column>
             <el-table-column
-                label="摘要"
-                align="center"
-                prop="introduction"
-                >
-            </el-table-column>
-            <el-table-column
                 label="分类"
                 align="center"
-                width="100"
+                min-width="100"
                 >
                 <template slot-scope="props">
                     {{props.row.category}}
                 </template>
             </el-table-column>
-
+            <el-table-column
+                label="标签"
+                align="center"
+                min-width="100"
+                >
+                <template slot-scope="props">
+                    <el-tag class="table-tag" size="small" v-for="item in props.row.tag" :key="item">{{item}}</el-tag>
+                </template>
+            </el-table-column>
             <el-table-column
                 width="100"
                 label="发布人"
@@ -98,39 +101,32 @@
                 prop="origin">
             </el-table-column>
             <el-table-column
-                width="160"
+                width="170"
                 label="发布时间"
                 align="center"
                 prop="time">
             </el-table-column>
 
             <el-table-column
-                label="标签"
-                width="160"
-                align="center"
-                >
-                <template slot-scope="props">
-                    <el-tag class="table-tag" size="small" v-for="item in props.row.tag" :key="item">{{item}}</el-tag>
-                </template>
-            </el-table-column>
-            <el-table-column
                 label="状态"
-                width="100"
+                width="140"
                 align="center"
                 >
                 <template slot-scope="props">
-                    <el-tag class="table-tag" type="success" size="small" v-if="props.row.status == 1" >发布</el-tag>
+                    <el-tag class="table-tag" type="success" size="small" v-if="props.row.status == 2" >发布</el-tag>
                     <el-tag class="table-tag" type="info" size="small" v-else>草稿</el-tag>
-                     <el-button size="small" type="primary" v-if="props.row.recommend == 1">推荐</el-button>
+                    <el-tag class="table-tag" size="small" v-if="props.row.recommend == 1" >推荐</el-tag>
                 </template>
             </el-table-column>
             <el-table-column label="操作" width="200" align="center">
                  <template slot-scope="props">
-                     <el-button type="text" size="small" title="编辑用户">预览</el-button>
-                     <el-button type="text" size="small" title="重置密码">发布</el-button>
-                     <el-button type="text" size="small" title="重置密码">置顶</el-button>
+                     <el-button type="text" size="small" :title="props.row.status==2 ? '草稿':'发布'" @click="changeArticleStatus({aid:props.row.aid,status:props.row.status==2?1:2})">{{props.row.status==2 ? '草稿':'发布'}}</el-button>
+                     <el-button type="text" size="small" :title="props.row.recommend ? '取消推荐':'推荐'" @click="changeArticleStatus({aid:props.row.aid,recommend:props.row.recommend ?0:1})">{{props.row.recommend ? '取消推荐':'推荐'}}</el-button>
+                      <br/>
+                     <el-button type="text" size="small" title="预览文章">预览</el-button>
                      <el-button type="text" size="small" title="编辑用户" @click="showEditorArticle(props.row)">编辑</el-button>
-                     <el-button type="text" size="small" title="删除用户" @click="deleteArticle(props.row.aid)">删除</el-button>
+                     <el-button type="text" size="small" title="删除用户" @click="deleteArticle({aid:props.row.aid,isDel:1})">删除</el-button>
+
                  </template>
             </el-table-column>
         </el-table>
@@ -144,20 +140,20 @@
             :page-sizes="[10, 20, 30, 50]"
             :page-size="pageSize"
             layout="prev, pager, next, jumper,total, sizes"
-            :total="400">
+            :total="total">
             </el-pagination>
         </div>
         <!-- 用户添加编辑组件 -->
-        <user-dialog :open.sync="openDialog"  :type.sync="dialogType" :article="selectInfo"  />
+        <article-dialog :open.sync="openDialog" @success="getPageList"  :type.sync="dialogType" :article="selectInfo"  />
     </div>
 </template>
 <script>
-import userDialog from '@/pages/main/system/notice/Dialog.vue' // 添加组件
+import articleDialog from '@/pages/main/system/notice/Dialog.vue' // 添加组件
 import avator from '@/components/Avator.vue' // 头像组件
 export default {
   name: 'usersList',
   components: {
-    userDialog,
+    articleDialog,
     avator
   },
   data () {
@@ -169,6 +165,7 @@ export default {
       input5: '',
       currentPage: 1,
       pageSize: 10,
+      total: 0,
       dataList: [],
       selectInfo: null
     }
@@ -198,12 +195,12 @@ export default {
       }
       this.$apis.article.getArticleList(param)
         .then(res => {
-          console.log(res)
           if (res.code == 200 && res.data.lists && res.data.lists.length) {
             this.dataList = res.data.lists.map(el => {
               el.tag = JSON.parse(el.tag)
               return el
             })
+            this.total =  res.data.total
           } else {
             this.$message({
               message: res.msg,
@@ -233,13 +230,35 @@ export default {
       }
       this.openDialog = true
     },
-    deleteArticle (aid) {
+    deleteArticle (param) {
       this.$confirm('此操作将永久删除该文章, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-
+        this.changeArticleStatus(param)
+      })
+    },
+    changeArticleStatus (param) {
+      this.$apis.article.updateArticleStatus(param).then(res => {
+        if (res.code == 200) {
+          this.$message({
+            message: res.msg,
+            type: 'success',
+            duration: 1000
+          })
+          this.getPageList()
+        } else {
+          this.$message({
+            message: res.msg,
+            type: 'error',
+            duration: 1000
+          })
+        }
+      }).catch(err => {
+        if (err) {
+          console.log(err)
+        }
       })
     }
   }

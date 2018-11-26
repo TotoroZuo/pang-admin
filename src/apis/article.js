@@ -2,7 +2,7 @@
  * @Author: Long maomao
  * @Date: 2018-09-10 19:08:45
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2018-11-26 00:12:20
+ * @LastEditTime: 2018-11-26 23:08:22
  * @Description: 用户模块接口
  * @Email: zlf@zuolongfei.me
  */
@@ -50,34 +50,14 @@ const getArticleList = options => {
 }
 
 /**
- * @description 添加用户接口
- * @param  {String} options.account 用户名
- * @param  {String} options.password 用户密码
- * @param  {String} options.avator 头像
- * @param  {String} options.org 所属部门
- * @param  {Array} options.role 角色
- * @param  {String} options.name  姓名
- * @param  {String} options.enable 启用状态
- * @param  {String} options.phone 手机号
- * @param  {String} options.idcard 身份证号
- * @param  {String} options.isSuper 是否拥有超级权限
- * @return {Object} 接口返回数据
+ * @description 修改文章状态
+ * options.recommend // 修改推荐状态
+ * options.isDel // 删除文章
+ * options.status // 修改发布状态
  */
-
-const addUser = options => {
-  const url = '/admin/user/add'
-  const params = {
-    account: options.account,
-    password: options.password,
-    avator: options.avator,
-    org: options.org,
-    role: options.role.join(','),
-    name: options.name,
-    enable: Number(options.enable),
-    phone: options.phone,
-    idcard: options.idcard,
-    isSuper: Number(options.isSuper)
-  }
+const updateArticleStatus = options => {
+  const url = '/admin/article/updateArticleStatus'
+  const params = { ...options }
   return $request.post(url, params)
 }
 
@@ -147,7 +127,7 @@ const enableUser = options => {
 export default {
   addOrUpdateArticle,
   getArticleList,
-  addUser,
+  updateArticleStatus,
   editorUser,
   delUser,
   enableUser
